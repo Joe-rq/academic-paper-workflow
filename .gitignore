@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# Node
+node_modules/
+
+# 构建产物
+output/
+dist/
+build/
+*.docx
+*.pptx
+*.pdf
+
+# 媒体文件
+*.mp3
+*.mp4
+*.wav
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Claude Code
+.claude/settings.local.json

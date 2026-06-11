@@ -1,0 +1,17 @@
+{
+  "title": "",
+  "subtitle": "",
+  "author": "",
+  "affiliation": "",
+  "target": "",
+  "type": "journal-paper",
+  "word_count": 8000,
+  "citation_style": "GB/T 7714-2015",
+  "version": 1,
+  "build": {
+    "input": "draft/paper.md",
+    "output_dir": "output/",
+    "crossrefs": true,
+    "toc": true
+  }
+}

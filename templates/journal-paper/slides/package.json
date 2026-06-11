@@ -1,0 +1,12 @@
+{
+  "name": "paper-slides",
+  "version": "1.0.0",
+  "private": true,
+  "description": "论文答辩 PPT 生成模板",
+  "scripts": {
+    "build": "node compile.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
+}

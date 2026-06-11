@@ -1,0 +1,15 @@
+[project]
+name = "academic-paper-workflow"
+version = "1.0.0"
+description = "中文学术论文 AI 辅助写作工作流框架"
+requires-python = ">=3.11"
+dependencies = [
+    "python-docx>=1.1.0",
+    "matplotlib>=3.9.0",
+    "pillow>=10.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.5.0",
+]

@@ -1,0 +1,39 @@
+# {TITLE}
+
+**作者**：{AUTHOR}  **单位**：{AFFILIATION}
+
+**摘要**：{BACKGROUND}。{PURPOSE}。{METHOD}。{FINDING}。{CONCLUSION}。
+
+**关键词**：{KEYWORD1}；{KEYWORD2}；{KEYWORD3}
+
+---
+
+## 一、{SECTION_1_TITLE}
+
+{CONTENT_1}
+
+{过渡句}
+
+## 二、{SECTION_2_TITLE}
+
+{CONTENT_2}
+
+{过渡句}
+
+## 三、{SECTION_3_TITLE}
+
+{CONTENT_3}
+
+{过渡句}
+
+## 结语
+
+{CONCLUSION_SUMMARY}。{OUTLOOK}。
+
+---
+
+**参考文献**
+
+[1] {REF_PLACEHOLDER}
+[2] {REF_PLACEHOLDER}
+[3] {REF_PLACEHOLDER}

@@ -1,0 +1,19 @@
+{
+  "title": "",
+  "subtitle": "",
+  "author": "",
+  "affiliation": "",
+  "advisor": "",
+  "degree": "",
+  "target": "",
+  "type": "thesis",
+  "word_count": 30000,
+  "citation_style": "GB/T 7714-2015",
+  "version": 1,
+  "build": {
+    "input": "draft/thesis.md",
+    "output_dir": "output/",
+    "crossrefs": true,
+    "toc": true
+  }
+}
