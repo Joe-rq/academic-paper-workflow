@@ -58,7 +58,7 @@ Layer 4 持续优化 → 模式积累 + 同类扫描
 - 动作：复制 `templates/{type}/` → 生成 paper-config.json → 建 draft/refs/figures/output/
 
 ### Stage 2 brainstorm
-交互引导 34 问（6 阶段：问题发现 / 贡献结晶 / 评估设计 / 定位框架 / 架构约束 / 叙事主线），产 project_context.md。问题清单见 `brainstorming-guide.md`。
+交互引导 34 问（6 阶段：问题发现 / 贡献结晶 / 评估设计 / 定位框架 / 架构约束 / 叙事主线），产 project_context.md。问题清单见 `brainstorming-guide.md`。**完成前必须自检 Q1–Q34 全部有回答**；暂时无法回答的标"待补"，不得静默跳过。
 
 ### Stage 3 research
 委托 `/deep-research "主题"`。两份指南互补使用：`deep-research-guide.md` 讲**方法论**（怎么搜、怎么整理、缺口分析），`academic-search-guide.md` 讲**检索实操**（去哪搜、怎么调 API、中文文献的检索现实与可选增强）。**中文文献发现可选增强**：在客户端配置秘塔 MCP（远程 HTTP，需自行申请 API Key），用 `metaso_web_search` 的 `paper` scope 补国际库覆盖盲区——安装与边界见 `academic-search-guide.md` §9。**铁律：AI 生成的参考文献必须经数据库确认存在后方可引用。**

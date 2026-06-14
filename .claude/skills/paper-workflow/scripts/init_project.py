@@ -69,7 +69,7 @@ def main() -> None:
         "word_count": args.words,
         "version": 1,
         "current_stage": "init",
-        "stages": {"init": f"done@{now}"},
+        "stages": {"init": {"status": "done", "at": now, "executor": "internal"}},
     })
     with open(config_path, "w", encoding="utf-8") as f:
         json.dump(config, f, ensure_ascii=False, indent=2)
