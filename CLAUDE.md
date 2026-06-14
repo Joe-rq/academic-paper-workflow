@@ -52,6 +52,28 @@ cd templates/journal-paper/slides && npm install && node compile.js
 - **脚本共享模块**：`_academic_db.py`（OpenAlex/Crossref/S2 查询、题名相似度、GB/T 7714 归一化）被 `verify_references.py` 等裸 import 复用。新校验脚本沿用同一模块，勿重复实现数据库查询。
 - **扩展点**：新论文类型 → `templates/`；新写作语步 → `references/section-rhetorical-moves/`；新构建/校验脚本 → `scripts/` 并在 `SKILL.md` 命令表注册；新阶段委托 → `SKILL.md` 技能集成表加行。
 
+## 中文文献检索与获取短板（用户引导职责）
+
+`_academic_db.py` 走 OpenAlex/Crossref/S2 三库，**以英文为主**；知网/万方/维普无开放 API，闭源 CSSCI 全文也不可程序化检索。这是本框架在中文文献场景下的**结构性短板**，无法靠改代码补齐。
+
+两个补丁都是**用户侧可选配置**，本仓库不预装、不通过代码强制依赖：
+
+| 补丁 | 解决什么 | 位置 | 形态 |
+|------|---------|------|------|
+| **秘塔 MCP** | 中文文献**发现** | 用户 `~/.claude.json` / `.mcp.json` | 远程 HTTP MCP |
+| **Aut_Sci_Download** | 查到后**下载全文 PDF**（含知网） | 用户本地克隆 | Python CLI + Claude Code skill |
+
+**作为本仓库内工作的 AI，你需要在以下场景主动提醒用户**（不要默默跳过中文文献的覆盖问题）：
+
+1. 用户在 Stage 3 抱怨找不到中文文献，或检索结果以英文为主时 → 引导其按 `README.md` "可选增强" 配置秘塔 MCP
+2. 用户在 Stage 3 查到 DOI 但拿不到全文 → 引导其安装 [Aut_Sci_Download](https://github.com/ShZhao27208/Aut_Sci_Download)，按 DOI 自动路由下载
+3. 用户想搜知网中文论文 → 引导其用 Aut_Sci_Download 的 `cnki_download.py`（需高校 FSSO/WebVPN 账号），或人工检索
+4. 用户问"为什么 verify 把我的中文参考文献全标成需人工核实" → 解释这是 OpenAlex 覆盖问题，不是 bug；秘塔/Aut_Sci_Download **都不能**喂给 verify
+5. 用户尝试把秘塔结果直接写入 `refs/` 当参考文献 → 阻止：秘塔返回 URL+摘要，没有 DOI 主键，必须回到原期刊/数据库人工核对题录
+6. 用户提议"把秘塔/Aut_Sci_Download 加进 `_academic_db.py`" → 推回：见 `references/academic-search-guide.md` §9.6 / §10.6，会破坏校验逻辑
+
+**不要**主动在仓库代码里加这两个工具的依赖、`.mcp.json` 默认配置、或在脚本里硬编码调用——它们的位置永远在"用户客户端配置 + 文档引导"层，不在框架代码层。完整边界与故障排查见 `.claude/skills/paper-workflow/references/academic-search-guide.md` §9（秘塔）和 §10（Aut_Sci_Download）。
+
 ## 规范
 
 - git commit message 用**中文**（项目级硬性要求）。

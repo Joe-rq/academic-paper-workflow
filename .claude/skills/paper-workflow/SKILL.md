@@ -61,7 +61,7 @@ Layer 4 持续优化 → 模式积累 + 同类扫描
 交互引导 34 问（6 阶段：问题发现 / 贡献结晶 / 评估设计 / 定位框架 / 架构约束 / 叙事主线），产 project_context.md。问题清单见 `brainstorming-guide.md`。
 
 ### Stage 3 research
-委托 `/deep-research "主题"`。检索实操（OpenAlex / Semantic Scholar / Crossref API + 中文知网人工）见 `academic-search-guide.md`。**中文文献发现可选增强**：在客户端配置秘塔 MCP（远程 HTTP，需自行申请 API Key），用 `metaso_web_search` 的 `paper` scope 补国际库覆盖盲区——安装与边界见 `academic-search-guide.md` §9。**铁律：AI 生成的参考文献必须经数据库确认存在后方可引用。**
+委托 `/deep-research "主题"`。两份指南互补使用：`deep-research-guide.md` 讲**方法论**（怎么搜、怎么整理、缺口分析），`academic-search-guide.md` 讲**检索实操**（去哪搜、怎么调 API、中文文献的检索现实与可选增强）。**中文文献发现可选增强**：在客户端配置秘塔 MCP（远程 HTTP，需自行申请 API Key），用 `metaso_web_search` 的 `paper` scope 补国际库覆盖盲区——安装与边界见 `academic-search-guide.md` §9。**铁律：AI 生成的参考文献必须经数据库确认存在后方可引用。**
 
 ### Stage 4 outline
 读 project_context.md + 文献笔记 → 选框架（问题解决 / 案例分析 / 经验总结 / 比较研究 / 理论建构）→ 生成 draft/paper.md 骨架 → 用户确认锁定。见 `writing-workflow.md`。
@@ -122,12 +122,21 @@ paper-config.json：
   "target": "目标期刊/学校", "type": "journal-paper",
   "word_count": 8000, "citation_style": "GB/T 7714-2015", "version": 1,
   "current_stage": "init",
-  "stages": { "init": "done@2025-06-14T10:30Z" },
+  "stages": {
+    "init": { "status": "done", "at": "2025-06-14T10:30Z", "executor": "internal" }
+  },
   "build": { "input": "draft/paper.md", "output_dir": "output/", "crossrefs": true, "toc": true }
 }
 ```
 
-**阶段进度追踪**：`current_stage` 记录当前所在阶段；`stages` 记录每阶段的完成状态（`done@ISO时间` / `in_progress` / `skipped`）。**每阶段完成时，执行者（脚本或 AI）必须更新这两个字段**——这是 L3 对齐验证的硬信号。`status` 命令读取并展示。
+**阶段进度追踪**：`current_stage` 记录当前所在阶段；`stages` 记录每阶段的完成状态。**每阶段完成时，执行者（脚本或 AI）必须更新该阶段条目**——这是 L3 对齐验证的硬信号。`status` 命令读取并展示。
+
+`stages` 条目格式：
+- `status`：`done` / `in_progress` / `skipped`
+- `at`：ISO 时间戳
+- `executor`：`internal`（本 skill 直接执行）/ `external:skill-name`（委托外部 skill，如 `external:deep-research`）/ `team:skill-name`（多 agent 模式，如 `team:paper-review-team`）
+
+**executor 的意义**：审计用——`doctor` 可检查"委托了外部 skill 但该 skill 未安装"的配置冲突；`status` 可展示"Stage 5 走了 academic-paper 还是 internal"。
 
 ## 脚本与参考文档
 
@@ -149,7 +158,7 @@ paper-config.json：
 | 文档 | 用于 |
 |---|---|
 | `brainstorming-guide.md` | Stage 2 |
-| `academic-search-guide.md` / `deep-research-guide.md` | Stage 3 |
+| `academic-search-guide.md` + `deep-research-guide.md` | Stage 3（互补：前者=检索实操/API，后者=研究方法论） |
 | `writing-workflow.md` | Stage 4 |
 | `section-rhetorical-moves/` | Stage 5 |
 | `evidence-labeling.md` | 全程来源标注 |

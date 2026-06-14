@@ -76,6 +76,53 @@ academic-paper-workflow/
 - `paper-workflow` — 主工作流（10 阶段）
 - `paper-review-team` — 多 agent 同行评审。组建 4 个真正独立的评审 agent（主编/方法论专家/领域专家/魔鬼代言人）并行评审，突破单 agent 串行扮演的"伪独立评审"。Stage 7 质量验收时调用 `/paper-review-team` 获得更严格的对抗性评审。
 
+## 可选增强
+
+### 中文文献发现：秘塔 MCP
+
+Stage 3 内置的三大库（OpenAlex / Semantic Scholar / Crossref）以英文为主，对中文期刊召回率有限，知网/万方又无开放 API——这是本框架在中文文献检索上的已知短板。
+
+如果你写中文论文且常引中文期刊，**强烈建议**接入秘塔 AI 搜索的官方 MCP 作为补充：
+
+```jsonc
+// 加到 ~/.claude.json 或项目 .mcp.json
+{
+  "mcpServers": {
+    "metaso": {
+      "url": "https://metaso.cn/api/mcp",
+      "headers": { "Authorization": "Bearer ${METASO_API_KEY}" }
+    }
+  }
+}
+```
+
+- API Key 申请：https://metaso.cn/search-api/api-keys（需注册）
+- 远程 HTTP MCP，**不需要 pip/npm 装本地 server**
+- 详细配置、调用示例、能力边界（什么能补、什么补不了）见 `.claude/skills/paper-workflow/references/academic-search-guide.md` §9
+
+**用法定位**：秘塔只用作"中文文献发现"，**不替代**知网博硕/闭源 CSSCI 全文的人工核实，**也不参与** Stage 7 的 `verify_references.py` 真实性校验。
+
+### 论文全文下载：Aut_Sci_Download
+
+Stage 3 查到文献元数据（DOI/题名）后，如何获取全文 PDF？本框架不内置下载能力。[Aut_Sci_Download](https://github.com/ShZhao27208/Aut_Sci_Download)（MIT 协议）根据 DOI / arXiv ID / PMID 自动路由到 8 个数据源下载 PDF，**包括知网**（需高校 FSSO/WebVPN 账号）。
+
+```bash
+# 安装
+git clone https://github.com/ShZhao27208/Aut_Sci_Download.git
+cd Aut_Sci_Download && pip install -r requirements.txt
+
+# 配置 API Key（存入 ~/.aut-sci-download/.env）
+# Elsevier / Springer / IEEE / Unpaywall 各需免费 Key
+# 详见 https://github.com/ShZhao27208/Aut_Sci_Download
+```
+
+- 支持：Elsevier / Springer / IEEE / arXiv / Unpaywall / Semantic Scholar / PubMed / **知网**
+- 知网中文检索 + 下载需高校账号（FSSO 统一认证或 WebVPN）
+- 仓库自带 Claude Code skill（`.claude/skills/sci-download.md`），克隆后即可在对话中调用
+- 详细配置、路由逻辑、能力边界见 `.claude/skills/paper-workflow/references/academic-search-guide.md` §10
+
+**用法定位**：只做"下载全文"，不做文献发现（搜文献仍用 OpenAlex/秘塔），不做参考文献校验（仍用 `verify_references.py`）。
+
 ## 支持的论文类型
 
 | 类型 | 模板 | 说明 |
@@ -93,3 +140,4 @@ academic-paper-workflow/
 | [codex-claude-academic-skills](https://github.com/zLanqing/codex-claude-academic-skills) | zLanqing | MIT | 34问头脑风暴框架、6节写作语步、来源标注规范 |
 | [academic-research-skills](https://github.com/Imbad0202/academic-research-skills) | Cheng-I Wu | CC BY-NC 4.0 | 文献研究方法论、写作流程、评审维度 |
 | [Humanizer-zh](https://github.com/op7418/Humanizer-zh) | 歸藏 | MIT | 22种中文 AI 写作模式检测与消除 |
+| [Aut_Sci_Download](https://github.com/ShZhao27208/Aut_Sci_Download) | ShZhao27208 | MIT | 论文全文 PDF 下载（8 源自动路由，含知网 FSSO） |
