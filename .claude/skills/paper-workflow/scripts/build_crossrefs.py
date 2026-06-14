@@ -2,6 +2,10 @@
 
 泛化自 add_crossrefs.py，支持自定义参考文献标题。
 用法: python build_crossrefs.py --input paper.docx [--output paper_linked.docx] [--ref-heading 参考文献]
+
+Known limitation: 复合引用（如 [1,2,3]）不会生成超链接，仅单数字引用 [n] 支持。
+原因：docx XML 中复合引用在同一个 run 内，拆分为多个 hyperlink-run 需要 XML 级
+run 拆分与格式继承，当前未实现。功能影响仅为跳转体验，不影响数据正确性。
 """
 from __future__ import annotations
 

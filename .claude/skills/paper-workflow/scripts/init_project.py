@@ -58,6 +58,9 @@ def main() -> None:
     else:
         config = {}
 
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
+
     config.update({
         "title": args.name,
         "author": args.author,
@@ -65,6 +68,8 @@ def main() -> None:
         "type": args.type,
         "word_count": args.words,
         "version": 1,
+        "current_stage": "init",
+        "stages": {"init": f"done@{now}"},
     })
     with open(config_path, "w", encoding="utf-8") as f:
         json.dump(config, f, ensure_ascii=False, indent=2)

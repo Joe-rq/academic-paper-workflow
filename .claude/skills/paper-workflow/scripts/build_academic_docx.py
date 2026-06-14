@@ -23,6 +23,11 @@ from docx.oxml.ns import qn
 from docx.shared import Cm, Pt
 
 from _academic_db import normalize_reference, normalize_english_authors
+from validate_citations import (
+    validate as validate_citations,
+    _CITE_PATTERN,
+    _parse_cite_group,
+)
 
 
 BODY_FONT_CN = "宋体"
@@ -197,19 +202,24 @@ def renumber_citations_and_references(text: str):
         int(number): body.strip()
         for number, body in re.findall(r"^\[(\d+)\]\s+(.+)$", text, flags=re.MULTILINE)
     }
-    citation_order = []
-    for match in re.finditer(r"<sup>\[(\d+)\]</sup>|\^\[(\d+)\]", text):
-        number = int(match.group(1) or match.group(2))
-        if number not in citation_order:
-            citation_order.append(number)
+    # 按正文首次出现的顺序（展开复合/区间引用后）建立 old→new 映射
+    citation_order: list[int] = []
+    for match in _CITE_PATTERN.finditer(text):
+        inner = next(g for g in match.groups() if g is not None)
+        nums, _bad = _parse_cite_group(inner)
+        for n in nums:
+            if n not in citation_order:
+                citation_order.append(n)
     mapping = {old: new for new, old in enumerate(citation_order, start=1)}
 
     def replace_citation(match):
-        old = int(match.group(1) or match.group(2))
-        new = mapping.get(old, old)
+        inner = next(g for g in match.groups() if g is not None)
+        nums, _bad = _parse_cite_group(inner)
+        # 复合/区间一律展平为英文逗号；单引仍输出单数字
+        new_inner = ",".join(str(mapping.get(n, n)) for n in nums)
         if match.group(0).startswith("<sup>"):
-            return f"<sup>[{new}]</sup>"
-        return f"^[{new}]"
+            return f"<sup>[{new_inner}]</sup>"
+        return f"^[{new_inner}]"
 
     lines = text.splitlines()
     out = []
@@ -231,7 +241,7 @@ def renumber_citations_and_references(text: str):
                 refs_written = True
                 in_refs = False
             continue
-        out.append(re.sub(r"<sup>\[(\d+)\]</sup>|\^\[(\d+)\]", replace_citation, line))
+        out.append(_CITE_PATTERN.sub(replace_citation, line))
     if in_refs and not refs_written:
         for old in citation_order:
             if old in refs:
@@ -319,17 +329,6 @@ def parse_markdown(md_path: Path):
             i += 1
         elements.append(("p", 0, " ".join(buf)))
     return elements, reference_report
-
-
-def validate_citations(md_text: str):
-    cited = [int(x) for m in re.findall(r"<sup>\[(\d+)\]</sup>|\^\[(\d+)\]", md_text) for x in m if x]
-    refs = [int(n) for n in re.findall(r"^\[(\d+)\]\s+", md_text, flags=re.MULTILINE)]
-    return {
-        "cited": sorted(set(cited)),
-        "refs": sorted(set(refs)),
-        "missing_refs": sorted(set(cited) - set(refs)),
-        "uncited_refs": sorted(set(refs) - set(cited)),
-    }
 
 
 def insert_page_break(doc):
@@ -680,12 +679,39 @@ def build_docx(md_path: Path, out_path: Path, template_path: Path | None = None)
     return citation_report
 
 
+def _preflight_validate(md_path: Path) -> None:
+    """build 前自检：bad_tokens / missing_refs 任一非空即 abort。
+
+    这是 SKILL.md "build 前置 validate" 的代码契约化——避免作者跳过 validate
+    把含编号问题的 md 直接 build 成投稿稿件。
+    """
+    md_text = md_path.read_text(encoding="utf-8")
+    result = validate_citations(md_text)
+    fatal = []
+    if result["bad_tokens"]:
+        fatal.append(f"无法解析的引用 token: {sorted(set(result['bad_tokens']))}")
+    if result["missing_refs"]:
+        fatal.append(f"缺失参考文献定义: {result['missing_refs']}")
+    if fatal:
+        msg = "\n  - ".join(["build 前置自检不通过，已中止："] + fatal)
+        msg += "\n（请先跑 validate_citations.py 修正后再 build）"
+        raise SystemExit(msg)
+
+
 def main():
+    # Windows 控制台 utf-8 输出，与 validate_citations 一致
+    try:
+        import sys
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ImportError):
+        pass
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--template", type=Path)
     args = parser.parse_args()
+    _preflight_validate(args.input.resolve())
     report = build_docx(args.input.resolve(), args.output.resolve(), args.template.resolve() if args.template else None)
     print(f"完成: {args.output.resolve()} ({os.path.getsize(args.output):,} bytes)")
     print("引用编号:", report)

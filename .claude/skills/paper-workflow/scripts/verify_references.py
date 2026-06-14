@@ -119,6 +119,15 @@ def parse_reference(num: int, body: str) -> tuple[dict, list[tuple[str, str]]]:
     if doi and not _DOI_FORMAT_PAT.match(doi):
         issues.append(("HIGH", f"DOI 格式错误: {doi}"))
 
+    # AI 自承认未核实标记检测：方括号内出现"待人工核验/待补充/待确认/待完善"等
+    # 短语 → 整条按 HIGH 格式错误处理（等同缺少年份/标签），hard fail 阻断 build
+    _UNVERIFIED_MARKERS = re.compile(
+        r"\[待人工核验[^\]]*\]|" r"\[待补充[^\]]*\]|" r"\[待确认[^\]]*\]|" r"\[待完善[^\]]*\]"
+    )
+    unverified = _UNVERIFIED_MARKERS.findall(body)
+    if unverified:
+        issues.append(("HIGH", f"含 AI 自承认未核实标记: {'; '.join(unverified)}"))
+
     return {
         "num": num, "raw": body, "normalized": text, "core": core,
         "type": tag, "year": year, "authors": authors, "title": title, "doi": doi,
