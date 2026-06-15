@@ -141,3 +141,7 @@ cd Aut_Sci_Download && pip install -r requirements.txt
 | [academic-research-skills](https://github.com/Imbad0202/academic-research-skills) | Cheng-I Wu | CC BY-NC 4.0 | 文献研究方法论、写作流程、评审维度 |
 | [Humanizer-zh](https://github.com/op7418/Humanizer-zh) | 歸藏 | MIT | 22种中文 AI 写作模式检测与消除 |
 | [Aut_Sci_Download](https://github.com/ShZhao27208/Aut_Sci_Download) | ShZhao27208 | MIT | 论文全文 PDF 下载（8 源自动路由，含知网 FSSO） |
+
+## 联系方式
+
+对本项目或论文工作流有任何想法、疑问，欢迎联系：**qrq-hit@foxmail.com**
