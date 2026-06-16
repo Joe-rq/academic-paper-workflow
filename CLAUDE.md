@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `.claude/skills/paper-workflow/SKILL.md` — 10 阶段工作流定义，作为 `/paper-workflow` 斜杠命令暴露给论文作者
 - `.claude/skills/paper-workflow/scripts/*.py` — init / 构建 / 校验脚本（被 SKILL.md 调用）
 - `.claude/skills/paper-review-team/` — Stage 7 的多 agent 评审 skill（独立可调用）
+- `.claude/skills/paper-revise-loop/` — Stage 8 的多 agent 修改验收 skill（Worker/Verifier 对抗循环，独立可调用）
 - `templates/{journal-paper,thesis,essay}/` — 论文项目模板
 - `references/*.md` — 写作知识库（头脑风暴、检索实操、各节写作语步、评审、AI 模式检测）
 
@@ -17,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 架构（关键设计）
 
 - **Markdown 是唯一源文件**：论文写为 `draft/paper.md`，经脚本转 docx。格式与内容分离，diff 可读。
-- **引用而非复制**：工作流各阶段委托给**外部** skill（`deep-research`/`academic-paper`/`academic-paper-reviewer`/`md-to-docx`/`humanizer-cn`，经 42plugin 安装）。本仓库只提供编排 + 两个内置 skill。改某阶段行为前先确认它是否实际跑在外部 skill 里。
+- **引用而非复制**：工作流各阶段委托给**外部** skill（`deep-research`/`academic-paper`/`academic-paper-reviewer`/`md-to-docx`/`humanizer-cn`，经 42plugin 安装）。本仓库只提供编排 + 三个内置 skill（`paper-workflow` 编排器 + `paper-review-team` 评审 + `paper-revise-loop` 修改验收）。改某阶段行为前先确认它是否实际跑在外部 skill 里。
 - **单一信息源**：`paper-review-team` 的评审方法论引用 `paper-workflow/references/peer-review-simulation.md`，自身不复制。改评审逻辑时两处都要看。
 - **四层元架构**（认知边界/意图防护/执行可靠/持续优化）是 SKILL.md 内对工作流阶段的约束，不是运行时代码——别去找它的实现。
 
@@ -44,7 +45,7 @@ cd templates/journal-paper/slides && npm install && node compile.js
 
 ### 工作流（终端用户，在 Claude Code 内）
 
-`/paper-workflow <stage>`，10 阶段：`init → brainstorm → research → outline → write → figures → review → revise → build → archive`。辅助命令：`status`、`doctor`（依赖检查）、`validate`、`verify`、`build-ppt`、`watchdog`。`/paper-review-team` = Stage 7 多 agent 增强执行器。**完整命令表与参数见 `SKILL.md`，勿在此重复。**
+`/paper-workflow <stage>`，10 阶段：`init → brainstorm → research → outline → write → figures → review → revise → build → archive`。辅助命令：`status`、`doctor`（依赖检查）、`validate`、`verify`、`build-ppt`、`watchdog`。`/paper-review-team` = Stage 7 多 agent 评审执行器；`/paper-revise-loop` = Stage 8 多 agent 修改验收执行器（Worker/Verifier 对抗循环）。**完整命令表与参数见 `SKILL.md`，勿在此重复。**
 
 ## 关键约定
 

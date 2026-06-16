@@ -33,7 +33,7 @@ Layer 4 持续优化 → 模式积累 + 同类扫描
 | 5 | `write` | 逐节写作 | 完整初稿 | **委托 `/academic-paper`**，语步见 `section-rhetorical-moves/` |
 | 6 | `figures` | 图表生成 | figures/*.png | 自有 `generate_figures.py` |
 | 7 | `review` | 同行评审 + AI 检测 | 评审报告 | 单 agent 自有 / 多 agent `/paper-review-team`；防伪造 `verify` |
-| 8 | `revise` | 按评审修改 | 修改稿 | 自有，见 `quality-checklist.md` |
+| 8 | `revise` | 按评审修改 | 修改稿 | 单 agent 自有，见 `quality-checklist.md` / 严格验收 `/paper-revise-loop` |
 | 9 | `build` | md→docx + 交叉引用 | output/*.docx | 自有 `build_academic_docx.py` |
 | 10 | `archive` | 版本快照 | _archive/vN/ | 自有 `archive_version.py` |
 
@@ -78,7 +78,8 @@ Layer 4 持续优化 → 模式积累 + 同类扫描
 - **必跑** `verify` 防伪造
 
 ### Stage 8 revise
-读评审报告 → 按优先级逐项改 → 改完重跑 `validate`/`verify`。验收见 `quality-checklist.md`。
+- 默认单 agent：读评审报告 → 按优先级逐项改 → 改完重跑 `validate`/`verify`。验收见 `quality-checklist.md`
+- 需严格修改验收（独立核验评审意见改到位没）→ `/paper-revise-loop`（Worker 改 / Verifier 对抗核验，与 Stage 7 双模式对称）
 
 ### Stage 9 build
 ```
