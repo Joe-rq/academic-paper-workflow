@@ -2,6 +2,15 @@
 
 中文学术论文 AI 辅助写作工作流框架。覆盖期刊论文、毕业论文、征文等场景。
 
+## 特点
+
+- **多 agent 评审-修改闭环** —— Stage 7 组建 4 个真正独立的评审 agent（主编 / 方法论 / 领域 / 魔鬼代言人）并行对抗评审，Stage 8 由 Worker/Verifier 对抗循环独立验收修改。突破单 agent 串行扮演多角色的"伪独立评审"，评审与修改都有真独立的对抗把关。
+- **10 阶段全流程** —— 从选题头脑风暴到投稿归档，覆盖期刊论文 / 毕业论文 / 征文。
+- **中文论文原生** —— GB/T 7714 引用格式、22 种中文 AI 写作痕迹检测、中文文献检索补丁（秘塔 MCP / 知网下载引导）。
+- **Markdown 即唯一源** —— 论文写为 `draft/paper.md`，格式与内容分离，git diff 可读、版本可控，脚本转 docx。
+- **防 AI 编造参考文献** —— `verify` 对每条参考文献做 GB/T 7714 格式合规 + Crossref/OpenAlex 数据库存在性双重核验，专治 AI 杜撰文献。
+- **薄编排器 + 委托外部 skill** —— 不重复造轮子，重能力阶段（研究 / 写作 / 构建）委托 `deep-research` / `academic-paper` / `md-to-docx` 等成熟 skill。
+
 ## 快速开始
 
 ```bash
@@ -26,7 +35,7 @@ Stage 4  [outline]    大纲设计      → 生成论文大纲
 Stage 5  [write]      分节写作      → 按 rhetorical moves 逐节写作
 Stage 6  [figures]    图表制作      → matplotlib 生成图表
 Stage 7  [review]     同行评审      → /paper-review-team（多agent）/ /academic-paper-reviewer
-Stage 8  [revise]     修改迭代      → 根据评审意见修改
+Stage 8  [revise]     修改迭代      → /paper-revise-loop（多agent）/ 根据评审意见修改
 Stage 9  [build]      构建输出      → md→docx + 交叉引用
 Stage 10 [archive]    归档定稿      → 版本快照
 ```
@@ -40,8 +49,10 @@ academic-paper-workflow/
 │   │   ├── SKILL.md                # 工作流定义
 │   │   ├── references/             # 写作知识库
 │   │   └── scripts/                # 构建脚本
-│   └── paper-review-team/          # 多 agent 评审团队（Stage 7 增强）
-│       └── SKILL.md                # 4 角色独立并行评审
+│   ├── paper-review-team/          # 多 agent 评审团队（Stage 7 增强）
+│   │   └── SKILL.md                # 4 角色独立并行评审
+│   └── paper-revise-loop/          # 多 agent 修改验收（Stage 8 增强）
+│       └── SKILL.md                # Worker/Verifier 对抗循环
 ├── templates/                      # 论文项目模板
 │   ├── journal-paper/              # 期刊论文
 │   ├── thesis/                     # 毕业论文
@@ -75,6 +86,7 @@ academic-paper-workflow/
 
 - `paper-workflow` — 主工作流（10 阶段）
 - `paper-review-team` — 多 agent 同行评审。组建 4 个真正独立的评审 agent（主编/方法论专家/领域专家/魔鬼代言人）并行评审，突破单 agent 串行扮演的"伪独立评审"。Stage 7 质量验收时调用 `/paper-review-team` 获得更严格的对抗性评审。
+- `paper-revise-loop` — 多 agent 修改验收。Worker 按评审路线图逐条改稿，独立的 Verifier 对抗核验"改到位没"，收敛（重试预算 + 死锁检测 + 升级人工）破解单 agent 自改自验的"护短"。Stage 8 严格验收时调用 `/paper-revise-loop`，与 `/paper-review-team` 形成 review→revise 闭环。
 
 ## 可选增强
 
