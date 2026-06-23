@@ -7,7 +7,7 @@
 
 ## 一、单角色评审表（每位 teammate 填一份）
 
-写到各自的 `output/reviews/{role}.md`（role = `eic` / `method` / `domain` / `devil`），直接套用：
+写到各自的 `output/reviews/{role}.md`（role = `eic` / `method` / `domain` / `devil` / `statistician` / `reproducibility` / `ethicist`，后三个按 `reviewer_set.roles` 按需），直接套用：
 
 ```md
 # 评审意见 — {角色中文名}
@@ -60,7 +60,7 @@ lead 读完全部 4 份评审后，汇总写到 `output/review-report.md`：
 
 - **评审对象**：draft/paper.md
 - **日期**：{YYYY-MM-DD}
-- **评审人**：4（主编 / 方法论专家 / 领域专家 / 魔鬼代言人）
+- **评审人**：N（按 `reviewer_set.roles`，基础 4 + 按需专业角色）
 
 ## 1. 总体结论
 - 综合建议：[接受 / 小修 / 大修 / 拒绝]
@@ -75,6 +75,14 @@ lead 读完全部 4 份评审后，汇总写到 `output/review-report.md`：
 
 ### P2 应该改（中严重度共识）
 ……
+
+## 交叉验证硬伤（多角色独立命中，最高置信）
+
+> 同一问题被 ≥2 个互不可见独立上下文的角色命中 = 高置信硬伤（方法见 `conflict-detection.md`）。优先级高于普通共识，Worker / Verifier 验收时最该盯。单角色命中（即便尖锐）不入此表，归 §2 共识或单列。
+
+| # | 问题 | 命中角色 | 各自证据（原文 / 重算片段） | 置信度 |
+|---|------|---------|---------------------------|--------|
+| 1 | …… | devil, statistician | devil: "……"；statistician: "重算 p=……" | 🔴 高 |
 
 ## 3. 分歧问题（评审人意见不一）
 | # | 观点 A | 观点 B | 采纳 | 理由 |

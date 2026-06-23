@@ -32,7 +32,7 @@ Layer 4 持续优化 → 模式积累 + 同类扫描
 | 4 | `outline` | 论文大纲 | draft/paper.md 骨架 | 自有，见 `writing-workflow.md` |
 | 5 | `write` | 逐节写作 | 完整初稿 | **委托 `/academic-paper`**，语步见 `section-rhetorical-moves/` |
 | 6 | `figures` | 图表生成 | figures/*.png | 自有 `generate_figures.py` |
-| 7 | `review` | 同行评审 + AI 检测 | 评审报告 | 单 agent 自有 / 多 agent `/paper-review-team`；防伪造 `verify` |
+| 7 | `review` | 同行评审 + AI 检测 | 评审报告 | 单 agent 自有 / 多 agent `/paper-review-team`（按类型组队 + 交叉验证）；防伪造 `verify` |
 | 8 | `revise` | 按评审修改 | 修改稿 | 单 agent 自有，见 `quality-checklist.md` / 严格验收 `/paper-revise-loop` |
 | 9 | `build` | md→docx + 交叉引用 | output/*.docx | 自有 `build_academic_docx.py` |
 | 10 | `archive` | 版本快照 | _archive/vN/ | 自有 `archive_version.py` |
@@ -74,7 +74,7 @@ Layer 4 持续优化 → 模式积累 + 同类扫描
 
 ### Stage 7 review
 - 默认单 agent 按 `peer-review-simulation.md` 模拟 4 角色（主编 / 方法论 / 领域 / 魔鬼代言人）+ 7 维度 + `ai-pattern-detection.md` 22 模式
-- 需真独立对抗评审 → `/paper-review-team`（4 独立 agent 并行）
+- 需真独立对抗评审 → `/paper-review-team`（按论文类型组队：基础 4 + 按需统计 / 复现 / 伦理，独立 agent 并行 + lead 显式交叉验证）
 - **必跑** `verify` 防伪造
 
 ### Stage 8 revise
